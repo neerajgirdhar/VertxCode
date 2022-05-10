@@ -1,5 +1,11 @@
 {
 "http": {
   "port" : 8093
-}
+},
+  "dbproprerties": {
+    "port" : 8093,
+    "url" : "USL",
+    "username" : "admin",
+    "password" : "admin"
+  }
 }

@@ -25,8 +25,12 @@
       <main.verticle>com.example.practise.starter.MainVerticleRequestResponseStart</main.verticle>
        <main.verticle>com.example.practise.starter.MainVerticleCalculatorVerticleStart</main.verticle>
         <main.verticle>com.example.practise.starter.MainVerticleAllVerticleStart</main.verticle>
+
+    java -jar starter-1.0.0-SNAPSHOT-fat.jar -Djava.net.preferIPv4Stack=true -Dhttp.port=8094
+
     -->
-    <main.verticle>com.example.practise.starter.MainVerticlePublisherConsumer</main.verticle>
+   <main.verticle>com.example.youtube.implementation.MainVerticle</main.verticle>
+   <!-- <main.verticle>com.example.practise.starter.MainVerticleRequestResponseStart</main.verticle>-->
     <launcher.class>io.vertx.core.Launcher</launcher.class>
   </properties>
 

@@ -23,6 +23,8 @@ public class MainVerticleAllVerticleStart extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
     System.out.println("Overriden Start METHOD of MainVerticleAllVerticleStart");
      vertx.deployVerticle(new PublishVerticle());
+
+
     vertx.deployVerticle(new ConsumerVerticle());
     vertx.deployVerticle(new ConsumerVerticle1());
     vertx.deployVerticle(new RequestVerticle());
