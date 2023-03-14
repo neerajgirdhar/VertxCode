@@ -2,6 +2,9 @@
 "http": {
   "port" : 8093
 },
+  "student": {
+    "port" : 8096
+  },
   "dbproprerties": {
     "port" : 8093,
     "url" : "USL",

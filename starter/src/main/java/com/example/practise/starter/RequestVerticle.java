@@ -60,6 +60,7 @@ public class RequestVerticle extends AbstractVerticle {
       .post("/request/hello")
       .consumes("*/json").handler(this::testHello);
 
+
     ConfigStoreOptions configrationOptions =new ConfigStoreOptions()
       .setType("file")
       .setFormat("json")
