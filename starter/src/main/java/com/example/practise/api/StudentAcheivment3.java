@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class StudentAcheivment  extends AbstractVerticle {
+public class StudentAcheivment3  extends AbstractVerticle {
   String verticleID = UUID.randomUUID().toString();
   String verticleIDLatest = verticleID + " Student Acheivement Verticle";
 
@@ -30,7 +30,7 @@ public class StudentAcheivment  extends AbstractVerticle {
       } else {
         router.route().handler(BodyHandler.create());
         Route handler2 = router
-          .post("/fetch/StudentResult")
+          .post("/fetch/StudentResult3")
           .consumes("*/json").handler(this::fetchStudentDetails);
       }
     });
@@ -55,7 +55,7 @@ public class StudentAcheivment  extends AbstractVerticle {
     Future<JsonObject> config =configRetriever.getConfig();
     config.onComplete(result ->{
       if(config.succeeded()){
-        JsonObject httpJSON = config.result().getJsonObject("studentResult");
+        JsonObject httpJSON = config.result().getJsonObject("studentResult3");
         if(httpJSON == null){
           promise.fail("Failed To Fetch the Config");
         }
@@ -64,10 +64,10 @@ public class StudentAcheivment  extends AbstractVerticle {
         promise.complete("Success");
       }
       if(config.failed()){
-       promise.fail("Failed To Fetch the Config");
+        promise.fail("Failed To Fetch the Config");
       }
     });
-   return promise.future();
+    return promise.future();
   }
 
 
@@ -79,17 +79,18 @@ public class StudentAcheivment  extends AbstractVerticle {
     JsonObject response = new JsonObject();
     if(request.getString("name").equals("Neeraj"))
     {
-      Future<JsonObject> future = fetchAcademics();
+      Future<JsonObject> future = academics();
       System.out.println("Outside 0 ");
-      Future<JsonObject> future1 = fetchSports();
+      Future<JsonObject> future1 = sports();
       System.out.println("Outside 1");
-      Future<JsonObject> future2 = fetchExtraCurriculam();
+      Future<JsonObject> future2 = extra();
       System.out.println("Outside 2");
       List<Future> list =  new ArrayList<>();
       list.add(future);
       list.add(future1);
       list.add(future2);
       CompositeFuture compositeFuture = CompositeFuture.all(list);
+
       compositeFuture.onComplete(compositeFutureAsyncResult -> {
         if(compositeFutureAsyncResult.succeeded())
         {
@@ -119,11 +120,45 @@ public class StudentAcheivment  extends AbstractVerticle {
     response.put("timeTaken",timeTaken);
     rctx.request().response().end(response.encodePrettily());
   }
-
-  public Future<JsonObject> fetchAcademics()
+  public Future<JsonObject> academics()
   {
-    System.out.println("In fetchAcademics METHOD.......");
-    haveSomeRest();
+    System.out.println("In academics METHOD.......");
+    Promise<JsonObject> promise =  Promise.promise();
+    Future<JsonObject> future = haveSomeRest1();
+    Future<JsonObject> composedFuture= future.compose(res ->fetchAcademics(res,"YOYO"));
+    composedFuture.onComplete(resposne ->{
+      promise.complete(resposne.result());
+    });
+    return promise.future();
+  }
+
+  public Future<JsonObject> sports()
+  {
+    System.out.println("In academics METHOD.......");
+    Promise<JsonObject> promise =  Promise.promise();
+    Future<JsonObject> future = haveSomeRest1();
+    Future<JsonObject> composedFuture= future.compose(this::fetchSports);
+    composedFuture.onComplete(resposne ->{
+      promise.complete(resposne.result());
+    });
+    return promise.future();
+  }
+
+  public Future<JsonObject> extra()
+  {
+    System.out.println("In academics METHOD.......");
+    Promise<JsonObject> promise =  Promise.promise();
+    Future<JsonObject> future = haveSomeRest1();
+    Future<JsonObject> composedFuture= future.compose(this::fetchExtraCurriculam);
+    composedFuture.onComplete(resposne ->{
+      promise.complete(resposne.result());
+    });
+    return promise.future();
+  }
+  public Future<JsonObject> fetchAcademics(JsonObject result,String name)
+  {
+    System.out.println("In fetchAcademics METHOD......."+result.toString());
+    System.out.println("In fetchAcademics METHOD......."+name);
     Promise<JsonObject> promise =  Promise.promise();
     JsonObject jsonObject = new JsonObject();
     jsonObject.put("Physics","A");
@@ -134,13 +169,12 @@ public class StudentAcheivment  extends AbstractVerticle {
     promise.complete(jsonObject);
     System.out.println("Exiting out fetchAcademics METHOD.......");
     return promise.future();
-
   }
 
-  public Future<JsonObject> fetchExtraCurriculam()
+  public Future<JsonObject> fetchExtraCurriculam(JsonObject result)
   {
-    System.out.println("In fetchExtraCurriculam METHOD.......");
-    haveSomeRest();
+
+    System.out.println("In fetchExtraCurriculam METHOD......."+result.toString());
     Promise<JsonObject> promise =  Promise.promise();
     JsonObject jsonObject = new JsonObject();
     jsonObject.put("Art & Craft", "A");
@@ -153,11 +187,10 @@ public class StudentAcheivment  extends AbstractVerticle {
     return promise.future();
   }
 
-  public Future<JsonObject> fetchSports()
+  public Future<JsonObject> fetchSports(JsonObject result)
   {
-    System.out.println("In fetchSports METHOD.......");
-    haveSomeRest();
     Promise<JsonObject> promise =  Promise.promise();
+    System.out.println("In fetchSports METHOD......."+result.toString());
     JsonObject jsonObject = new JsonObject();
     jsonObject.put("Cricket", "A");
     jsonObject.put("Tennis", "A");
@@ -169,21 +202,36 @@ public class StudentAcheivment  extends AbstractVerticle {
     return promise.future();
   }
 
-  /*public void haveSomeRest() {
-    System.out.println("Sleeping");
-   try {
-    Thread.sleep(2000l);
-    System.out.println("Out of Sleep");
-   } catch (InterruptedException e) {
-    throw new RuntimeException(e);
-  }
-  }*/
-
   public void haveSomeRest(){
     System.out.println("Sleeping");
-    vertx.setTimer(2000, l -> {
+    vertx.setTimer(5000, l -> {
       System.out.println("Out of Sleep");
     });
   }
 
+  /*  public Future<String> haveSomeRest1() {
+  Promise<String> promise = Promise.promise();
+    System.out.println("Sleeping");
+    vertx.setTimer(5000, l -> {
+      System.out.println("Out of Sleep");
+      promise.complete("Success");
+
+    });
+  return promise.future();
+  }*/
+
+  public Future<JsonObject> haveSomeRest1() {
+    Promise<JsonObject> promise = Promise.promise();
+    System.out.println("Sleeping");
+    try {
+      Thread.sleep(2000l);
+      System.out.println("Out of Sleep");
+      JsonObject json = new JsonObject();
+      json.put("Sleep","success");
+      promise.complete(json);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    return promise.future();
+  }
 }

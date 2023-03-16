@@ -17,7 +17,10 @@ public class MainVerticle extends AbstractVerticle {
   public void start() throws Exception {
     System.out.println("Overriden Start METHOD of MainVerticle");
     vertx.deployVerticle(new StudentAcheivment());
-
+    vertx.deployVerticle(new StudentAcheivment1());
+    vertx.deployVerticle(new StudentAcheivment2());
+    vertx.deployVerticle(new StudentAcheivment3());
+    vertx.deployVerticle(new CallExternalAPI());
 
   }
 }

@@ -2,8 +2,20 @@
 "http": {
   "port" : 8093
 },
-  "student": {
+  "studentResult": {
     "port" : 8096
+  },
+  "studentResult1": {
+    "port" : 8097
+  },
+  "studentResult2": {
+    "port" : 8098
+  },
+  "studentResult3": {
+    "port" : 8099
+  },
+  "externalApi": {
+    "port" : 8092
   },
   "dbproprerties": {
     "port" : 8093,

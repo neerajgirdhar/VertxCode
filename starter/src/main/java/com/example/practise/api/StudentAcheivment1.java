@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class StudentAcheivment  extends AbstractVerticle {
+public class StudentAcheivment1  extends AbstractVerticle {
   String verticleID = UUID.randomUUID().toString();
   String verticleIDLatest = verticleID + " Student Acheivement Verticle";
 
@@ -30,7 +30,7 @@ public class StudentAcheivment  extends AbstractVerticle {
       } else {
         router.route().handler(BodyHandler.create());
         Route handler2 = router
-          .post("/fetch/StudentResult")
+          .post("/fetch/StudentResult1")
           .consumes("*/json").handler(this::fetchStudentDetails);
       }
     });
@@ -55,7 +55,7 @@ public class StudentAcheivment  extends AbstractVerticle {
     Future<JsonObject> config =configRetriever.getConfig();
     config.onComplete(result ->{
       if(config.succeeded()){
-        JsonObject httpJSON = config.result().getJsonObject("studentResult");
+        JsonObject httpJSON = config.result().getJsonObject("studentResult1");
         if(httpJSON == null){
           promise.fail("Failed To Fetch the Config");
         }
@@ -85,11 +85,16 @@ public class StudentAcheivment  extends AbstractVerticle {
       System.out.println("Outside 1");
       Future<JsonObject> future2 = fetchExtraCurriculam();
       System.out.println("Outside 2");
+      Future<JsonObject> future3 = haveSomeRest1();
+      System.out.println("Outside 3");
+
       List<Future> list =  new ArrayList<>();
       list.add(future);
       list.add(future1);
       list.add(future2);
-      CompositeFuture compositeFuture = CompositeFuture.all(list);
+      list.add(future3);
+     CompositeFuture compositeFuture = CompositeFuture.all(list);
+
       compositeFuture.onComplete(compositeFutureAsyncResult -> {
         if(compositeFutureAsyncResult.succeeded())
         {
@@ -123,7 +128,6 @@ public class StudentAcheivment  extends AbstractVerticle {
   public Future<JsonObject> fetchAcademics()
   {
     System.out.println("In fetchAcademics METHOD.......");
-    haveSomeRest();
     Promise<JsonObject> promise =  Promise.promise();
     JsonObject jsonObject = new JsonObject();
     jsonObject.put("Physics","A");
@@ -134,13 +138,11 @@ public class StudentAcheivment  extends AbstractVerticle {
     promise.complete(jsonObject);
     System.out.println("Exiting out fetchAcademics METHOD.......");
     return promise.future();
-
   }
 
   public Future<JsonObject> fetchExtraCurriculam()
   {
     System.out.println("In fetchExtraCurriculam METHOD.......");
-    haveSomeRest();
     Promise<JsonObject> promise =  Promise.promise();
     JsonObject jsonObject = new JsonObject();
     jsonObject.put("Art & Craft", "A");
@@ -155,9 +157,8 @@ public class StudentAcheivment  extends AbstractVerticle {
 
   public Future<JsonObject> fetchSports()
   {
-    System.out.println("In fetchSports METHOD.......");
-    haveSomeRest();
     Promise<JsonObject> promise =  Promise.promise();
+    System.out.println("In fetchSports METHOD.......");
     JsonObject jsonObject = new JsonObject();
     jsonObject.put("Cricket", "A");
     jsonObject.put("Tennis", "A");
@@ -169,21 +170,32 @@ public class StudentAcheivment  extends AbstractVerticle {
     return promise.future();
   }
 
-  /*public void haveSomeRest() {
-    System.out.println("Sleeping");
-   try {
-    Thread.sleep(2000l);
-    System.out.println("Out of Sleep");
-   } catch (InterruptedException e) {
-    throw new RuntimeException(e);
-  }
-  }*/
-
   public void haveSomeRest(){
-    System.out.println("Sleeping");
-    vertx.setTimer(2000, l -> {
-      System.out.println("Out of Sleep");
-    });
+     System.out.println("Sleeping");
+      vertx.setTimer(5000, l -> {
+        System.out.println("Out of Sleep");
+      });
   }
 
+  public Future<JsonObject> haveSomeRest1() {
+  Promise<JsonObject> promise = Promise.promise();
+    System.out.println("Sleeping");
+    try {
+      Thread.sleep(2000l);
+      System.out.println("Out of Sleep");
+      JsonObject json = new JsonObject();
+      json.put("Sleep","success");
+      promise.complete(json);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+/*    vertx.setTimer(5000, l -> {
+      System.out.println("Out of Sleep");
+      JsonObject json = new JsonObject();
+      json.put("Sleep","success");
+      promise.complete(json);
+
+    });*/
+  return promise.future();
+  }
 }
