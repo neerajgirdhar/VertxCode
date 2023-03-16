@@ -18,7 +18,7 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
 
 import java.util.UUID;
-
+//GET : http://localhost:8092/api/nonblocking/numberTrivia?number=6&api=math
 public class CallExternalAPI extends AbstractVerticle {
   String verticleID = UUID.randomUUID().toString();
   String verticleIDLatest = verticleID + " CallExternalAPI Verticle";
@@ -84,7 +84,8 @@ public class CallExternalAPI extends AbstractVerticle {
 
     System.out.println(rctx.request().getParam("number"));
 
-    HttpRequest<Buffer> request = vertxClient.get(80, "numbersapi.com", "/" + rctx.request().getParam("number") + "/trivia");
+    HttpRequest<Buffer> request = vertxClient.get(80, "numbersapi.com", "/" + rctx.request().getParam("number") + "/"+ rctx.request().getParam("api"));
+    System.out.println(request.toString());
     Future<HttpResponse<Buffer>> future = request.send();
 
 
