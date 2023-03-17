@@ -79,23 +79,26 @@ public class CallExternalAPI extends AbstractVerticle {
     System.out.println("In STOP METHOD");
   }
 
-  public void fetchNumberDetails(RoutingContext rctx,WebClient vertxClient){
-    long startTime = System.currentTimeMillis();
+  public HttpRequest<Buffer> createRequest(RoutingContext rctx,WebClient vertxClient) {
+    String number = rctx.request().getParam("number");
+    String api = rctx.request().getParam("api");
+    HttpRequest<Buffer> request = vertxClient.
+      get(80, "numbersapi.com", "/" + number+ "/"+ api);
+    return request;
+  }
 
-    System.out.println(rctx.request().getParam("number"));
-
-    HttpRequest<Buffer> request = vertxClient.get(80, "numbersapi.com", "/" + rctx.request().getParam("number") + "/"+ rctx.request().getParam("api"));
-    System.out.println(request.toString());
+  public  Future<HttpResponse<Buffer>> callAPI(HttpRequest<Buffer> request) {
     Future<HttpResponse<Buffer>> future = request.send();
+    return future;
+  }
 
-
+  public  void parseAndSendResponse(RoutingContext rctx,Future<HttpResponse<Buffer>> future) {
     future.onComplete(resul ->{
       JsonObject finalJson = new JsonObject();
       HttpResponse<Buffer> response = resul.result();
       System.out.println( future.result().body().toString());
       if(resul.succeeded()) {
         finalJson.put(rctx.request().getParam("number"),response.bodyAsString());
-
         rctx.response().end(finalJson.toString());
       } else {
 
@@ -103,6 +106,15 @@ public class CallExternalAPI extends AbstractVerticle {
         rctx.response().end(finalJson.toString());
       }
     });
+
+  }
+
+  public void fetchNumberDetails(RoutingContext rctx,WebClient vertxClient){
+    long startTime = System.currentTimeMillis();
+
+    HttpRequest<Buffer> request = createRequest(rctx,vertxClient);
+    Future<HttpResponse<Buffer>> future =  callAPI(request);
+    parseAndSendResponse(rctx,future);
 
   }
 }
